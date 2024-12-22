@@ -45,146 +45,44 @@ defmodule ChatWeb.ChatLive do
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Chat Room</title>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                background-color: #f4f4f4;
-                margin: 0;
-                padding: 0;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 100vh;
-            }
 
-            .container {
-                max-width: 90%;
-                width: 700px;
-                background-color: #fff;
-                box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-                border-radius: 8px;
-                overflow: hidden;
-                display: flex;
-            }
-
-            .chat-container {
-                width: 75%;
-                display: flex;
-                flex-direction: column;
-            }
-
-            .user-list {
-                width: 25%;
-                background-color: #f0f0f0;
-                border-left: 1px solid #ccc;
-                padding: 10px;
-                overflow-y: auto;
-            }
-
-            .chat-header {
-                background-color: #007bff;
-                color: #fff;
-                padding: 10px;
-                text-align: center;
-                font-size: 18px;
-            }
-
-            .chat-messages {
-                flex-grow: 1;
-                padding: 10px;
-                overflow-y: auto;
-                border-bottom: 1px solid #ccc;
-            }
-
-            .chat-message {
-                margin-bottom: 10px;
-            }
-
-            .chat-message .username {
-                font-weight: bold;
-                margin-right: 5px;
-            }
-
-            .chat-message .time {
-                font-size: 0.85em;
-                color: #888;
-            }
-
-            .chat-input {
-                background-color: #f4f4f4;
-                padding: 10px;
-            }
-
-            .chat-input input {
-                flex-grow: 1;
-                padding: 10px;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-                margin-right: 10px;
-            }
-
-            .chat-input button {
-                padding: 10px 120px;
-                margin: 10px 0;
-                border: none;
-                background-color: #007bff;
-                color: #fff;
-                border-radius: 4px;
-                cursor: pointer;
-            }
-
-            .chat-input button:hover {
-                background-color: #0056b3;
-            }
-
-            .user-list h3 {
-                margin-top: 0;
-            }
-
-            .user-item {
-                margin-bottom: 5px;
-                padding: 5px;
-                background-color: #e0e0e0;
-                border-radius: 4px;
-            }
-        </style>
     </head>
-    <body>
+    <body class="flex justify-center items-center min-h-screen bg-gray-100">
     <.simple_form for={@form} phx-submit="save_message" phx-change="change_message">
-        <div class="container">
-            <div class="chat-container">
-                <div class="chat-header">
-                    Chat Room: <%= @room %> as <%= @current_user.username %>
-                </div>
+        <div class="container max-w-full shadow-lg rounded-lg overflow-hidden flex">
+          <!-- Chat container -->
+          <div class="chat-container w-3/4 flex flex-col">
+              <!-- Header -->
+              <div class="chat-header bg-blue-600 text-white text-center text-lg py-3">
+                  Chat Room: <%= @room %> as <%= @current_user.username %>
+              </div>
 
-                <div class="chat-messages" id="message-list" phx-update="append">
-                    <div :for={message <- @messages} id={"message-#{message.id}"} class="chat-message">
-                        <.message_line message={message} />
-                    </div>
-                </div>
+              <!-- Messages list -->
+              <div class="chat-messages flex-grow p-4 overflow-y-auto border-b border-gray-300" id="message-list" phx-update="append">
+                  <div :for={message <- @messages} id={"message-#{message.id}"} class="chat-message mb-4">
+                      <.message_line message={message} />
+                  </div>
+              </div>
 
-                <div class="chat-input">
-                    <.input field={@form[:text]} name="message" type="text" placeholder="Type your message here..." />
-                    <.typing_users_message users={@typing_users} />
-                    <button type="submit">Send</button>
-                </div>
+            <!-- Input -->
+            <div class="chat-input bg-gray-100 p-4 flex items-center gap-2 w-full">
+                <.input field={@form[:text]} class="w-500 p-2 border border-gray-300 rounded" name="message" type="text" placeholder="Type your message here..."
+                          />
+                <.typing_users_message users={@typing_users} />
+                <button type="submit" class=" flex-none w-24 py-2 px-6 bg-blue-600 text-white rounded hover:bg-blue-700">Send</button>
             </div>
+          </div>
 
-            <div class="user-list">
-                <h3>Connected Users</h3>
-                <ul :for={user <- @online_users} class="user-item">
-                   <li> <%= user %> </li>
-                </ul>
-            </div>
+          <!-- User list -->
+          <div class="user-list w-1/4 bg-gray-200 border-l border-gray-300 p-4 overflow-y-auto">
+              <h3 class="text-lg font-semibold mb-4">Connected Users</h3>
+              <ul :for={user <- @online_users} class="user-item bg-gray-300 p-2 mb-2 rounded">
+                  <li><%= user %></li>
+              </ul>
+          </div>
         </div>
-
-        <script>
-            window.addEventListener("phx:clear_input", () => {
-                document.querySelector('input[name="message"]').value = "";
-            });
-        </script>
-    </.simple_form>
-    </body>
+      </.simple_form>
+      </body>
     </html>
     """
   end
